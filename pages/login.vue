@@ -12,11 +12,12 @@ const signInWithOtp = async () => {
     email: email.value,
     options: {
       emailRedirectTo: 'http://localhost:3000/confirm',
-    }
+    },
   })
   if (error) console.log(error)
 }
 </script>
+
 <template>
   <div>
     <button @click="signInWithOtp">
@@ -25,6 +26,6 @@ const signInWithOtp = async () => {
     <input
       v-model="email"
       type="email"
-    />
+    >
   </div>
 </template>

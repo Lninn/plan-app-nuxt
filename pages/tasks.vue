@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { dayjs } from 'element-plus';
-import type { Database, Tables } from '~/database.types'
+import { dayjs } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
+import type { Database, Tables } from '~/database.types'
 
 const supabase = useSupabaseClient<Database>()
 const { categories: originalCategories, loading, refreshCategories } = useCategories()
 
 interface EditDialogForm {
-  name: string;
+  name: string
 }
 const editDialogFormVisible = ref(false)
 const editDialogFormRef = ref<FormInstance>()
@@ -30,47 +30,47 @@ function getActionLoading(index: number): boolean {
 }
 
 interface NestedCategory {
-  id: number;
-  name: string;
-  level: number;
-  createdAt: string;
-  children?: NestedCategory[];
+  id: number
+  name: string
+  level: number
+  createdAt: string
+  children?: NestedCategory[]
 }
 
 function convertToNestedListRecursive(items: Tables<'categories'>[]): NestedCategory[] {
-  const result: NestedCategory[] = [];
-  
+  const result: NestedCategory[] = []
+
   for (const item of items) {
-    let targetParent = result.find(r => r.id === item.parent_id);
+    let targetParent = result.find(r => r.id === item.parent_id)
 
     if (!targetParent) {
-      targetParent = { id: item.id, name: item.name, level: item.level, createdAt: item.created_at, children: [] };
-      result.push(targetParent);
+      targetParent = { id: item.id, name: item.name, level: item.level, createdAt: item.created_at, children: [] }
+      result.push(targetParent)
     }
 
     if (targetParent.id !== item.id) {
       if (!targetParent.children) {
-        targetParent.children = [];
+        targetParent.children = []
       }
-      
-      const nestedItem: NestedCategory = { id: item.id, name: item.name, level: item.level, createdAt: item.created_at, children: [] };
-      targetParent.children.push(nestedItem);
+
+      const nestedItem: NestedCategory = { id: item.id, name: item.name, level: item.level, createdAt: item.created_at, children: [] }
+      targetParent.children.push(nestedItem)
 
       // 递归处理子节点
-      const childItems = items.filter(i => i.parent_id === item.id);
+      const childItems = items.filter(i => i.parent_id === item.id)
       if (childItems.length > 0) {
-        nestedItem.children = convertToNestedListRecursive(childItems);
+        nestedItem.children = convertToNestedListRecursive(childItems)
       }
     }
   }
 
   // 返回所有顶级分类（parent_id 为 null 或 undefined）
-  return result.filter(category => category.id !== null);
+  return result.filter(category => category.id !== null)
 }
 
 const search = ref('')
 const nestedCategories = computed(() =>
-  convertToNestedListRecursive(originalCategories.value)
+  convertToNestedListRecursive(originalCategories.value),
 )
 
 async function onEditDialogFormSubmit(formEl: FormInstance | undefined) {
@@ -78,7 +78,8 @@ async function onEditDialogFormSubmit(formEl: FormInstance | undefined) {
   await formEl.validate((valid, fields) => {
     if (valid) {
       editCategory(editDialogForm)
-    } else {
+    }
+    else {
       console.log('error submit!', fields)
     }
   })
@@ -98,12 +99,17 @@ async function editCategory(nextState: EditDialogForm) {
 
     if (error) {
       ElMessage.error(error.message)
-    } else {
+    }
+    else {
       ElMessage.success('更新成功')
       editDialogFormVisible.value = false
       await refreshCategories()
     }
-  } catch (error) {} finally {
+  }
+  catch (error) {
+    console.log(error)
+  }
+  finally {
     updateLoading.value = false
     activeIndex.value = undefined
     activeRow.value = undefined
@@ -125,15 +131,20 @@ const handleDelete = async (index: number, row: NestedCategory) => {
     const { error } = await supabase
       .from('categories')
       .delete()
-      .eq('id', row.id);
-    
+      .eq('id', row.id)
+
     if (error) {
       ElMessage.error(error.message)
-    } else {
+    }
+    else {
       ElMessage.success('删除成功')
       await refreshCategories()
     }
-  } catch (error) {} finally {
+  }
+  catch (error) {
+    console.log(error)
+  }
+  finally {
     actionLoading.value = false
     activeIndex.value = undefined
   }
@@ -150,54 +161,114 @@ function formatDate(date: string): string {
 
 <template>
   <div>
-    <el-button plain @click="addCategory">添加分类</el-button>
+    <el-button
+      plain
+      @click="addCategory"
+    >
+      添加分类
+    </el-button>
 
-    <el-table row-key="id" v-loading="loading" :data="nestedCategories" style="width: 100%">
-      <el-table-column prop="name" label="名称" width="180" />
-      <el-table-column prop="level" label="类型" width="180" >
+    <el-table
+      v-loading="loading"
+      row-key="id"
+      :data="nestedCategories"
+      style="width: 100%"
+    >
+      <el-table-column
+        prop="name"
+        label="名称"
+        width="180"
+      />
+      <el-table-column
+        prop="level"
+        label="类型"
+        width="180"
+      >
         <template #default="scope">
-          <el-tag v-if="scope.row.level === 1" type="success">一级分类</el-tag>
-          <el-tag v-else type="info">二级分类</el-tag>
+          <el-tag
+            v-if="scope.row.level === 1"
+            type="success"
+          >
+            一级分类
+          </el-tag>
+          <el-tag
+            v-else
+            type="info"
+          >
+            二级分类
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createdAt" label="创建时间" >
+      <el-table-column
+        prop="createdAt"
+        label="创建时间"
+      >
         <template #default="scope">
           <span>{{ formatDate(scope.row.createdAt) }}</span>
         </template>
       </el-table-column>
       <el-table-column align="right">
         <template #header>
-          <el-input v-model="search" size="small" placeholder="Type to search" />
+          <el-input
+            v-model="search"
+            size="small"
+            placeholder="Type to search"
+          />
         </template>
         <template #default="scope">
-          <el-button size="small" @click="handleEdit(scope.$index, scope.row)">
+          <el-button
+            size="small"
+            @click="handleEdit(scope.$index, scope.row)"
+          >
             编辑
           </el-button>
           <el-button
             size="small"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row)"
             :loading="getActionLoading(scope.$index)"
+            @click="handleDelete(scope.$index, scope.row)"
           >
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog
+      v-model="editDialogFormVisible"
+      title="编辑分类名称"
+      width="500"
+    >
+      <el-form
+        ref="editDialogFormRef"
+        :model="editDialogForm"
+        :rules="editDialogFormRules"
+      >
+        <el-form-item
+          label="分类名称"
+          prop="name"
+          :label-width="formLabelWidth"
+        >
+          <el-input
+            v-model="editDialogForm.name"
+            autocomplete="off"
+            placeholder="分类名称"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="editDialogFormVisible = false">
+            取消
+          </el-button>
+          <el-button
+            type="primary"
+            :loading="updateLoading"
+            @click="onEditDialogFormSubmit(editDialogFormRef)"
+          >
+            确认
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
-  <el-dialog v-model="editDialogFormVisible" title="编辑分类名称" width="500">
-    <el-form ref="editDialogFormRef" :model="editDialogForm" :rules="editDialogFormRules">
-      <el-form-item label="分类名称" prop="name" :label-width="formLabelWidth">
-        <el-input v-model="editDialogForm.name" autocomplete="off" placeholder="分类名称" />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="editDialogFormVisible = false">取消</el-button>
-        <el-button type="primary" :loading="updateLoading" @click="onEditDialogFormSubmit(editDialogFormRef)">
-          确认
-        </el-button>
-      </div>
-    </template>
-  </el-dialog> 
 </template>

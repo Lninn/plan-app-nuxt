@@ -7,9 +7,12 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@nuxt/eslint": "^0.3.6",
     "mockjs": "^1.1.0",
     "nuxt": "^3.11.2",
     "vue": "^3.4.21",
@@ -17,8 +20,10 @@
   },
   "devDependencies": {
     "@element-plus/nuxt": "^1.0.8",
+    "@nuxt/eslint-config": "^0.3.6",
     "@nuxtjs/supabase": "^1.2.0",
     "@types/mockjs": "^1.0.10",
-    "element-plus": "^2.6.3"
+    "element-plus": "^2.6.3",
+    "eslint": "^9.0.0"
   }
 }

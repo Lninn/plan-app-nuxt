@@ -9,30 +9,33 @@ export default function useCategories() {
   async function queryCategories() {
     try {
       loading.value = true
-      let { data } = await supabase
+      const { data } = await supabase
         .from('categories')
         .select('*')
-    
-      categories.value = data || [];
-    } catch (error) {
+
+      categories.value = data || []
+    }
+    catch (error) {
       console.log('error', error)
-    } finally {
+    }
+    finally {
       loading.value = false
     }
   }
 
   onMounted(() => {
-    queryCategories();
-  });
+    queryCategories()
+  })
 
   // 手动获取最新数据并更新
   async function refreshCategories() {
     try {
-      let { data } = await supabase
+      const { data } = await supabase
         .from('categories')
         .select('*')
-      categories.value = data || [];
-    } catch (error) {
+      categories.value = data || []
+    }
+    catch (error) {
       console.log('error', error)
     }
   }
@@ -42,4 +45,4 @@ export default function useCategories() {
     categories,
     refreshCategories,
   }
- }
+}

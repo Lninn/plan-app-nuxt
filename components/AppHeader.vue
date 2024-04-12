@@ -5,13 +5,28 @@
       class="el-menu-demo"
       mode="horizontal"
       @select="handleSelect"
+    >
+      <el-menu-item index="1">
+        主页
+      </el-menu-item>
+      <el-menu-item index="2">
+        分类
+      </el-menu-item>
+      <el-menu-item
+        index="3"
+        disabled
       >
-        <el-menu-item index="1">主页</el-menu-item>
-        <el-menu-item index="2">分类</el-menu-item>
-        <el-menu-item index="3" disabled>TODO</el-menu-item>
+        TODO
+      </el-menu-item>
     </el-menu>
-    <div style="width: 100%;"></div>
-    <el-button type="primary" v-if="user" @click="logout" >退出</el-button>
+    <div style="width: 100%;" />
+    <el-button
+      v-if="user"
+      type="primary"
+      @click="logout"
+    >
+      退出
+    </el-button>
   </nav>
 </template>
 

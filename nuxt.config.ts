@@ -1,16 +1,21 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: [
-    "@nuxtjs/supabase",
-    '@element-plus/nuxt'
-  ],
+  modules: ['@nuxtjs/supabase', '@element-plus/nuxt', '@nuxt/eslint'],
   supabase: {
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
-      cookieRedirect: true
-    }
+      cookieRedirect: true,
+    },
   },
-  elementPlus: {}
+  elementPlus: {},
+  eslint: {
+    config: {
+      stylistic: {
+        semi: false,
+        // ...
+      },
+    },
+  },
 })
