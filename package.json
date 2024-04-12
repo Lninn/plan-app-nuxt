@@ -16,7 +16,9 @@
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
+    "@element-plus/nuxt": "^1.0.8",
     "@nuxtjs/supabase": "^1.2.0",
-    "@types/mockjs": "^1.0.10"
+    "@types/mockjs": "^1.0.10",
+    "element-plus": "^2.6.3"
   }
 }
