@@ -121,7 +121,7 @@ async function createFirstCategory({ name }: FirstCategoryRuleForm) {
 </script>
 
 <template>
-  <div class="create-form">
+  <div>
     <div class="header">
       <div>新建分类</div>
       <el-button @click="firstCategoryDialogFormVisible = true">新增一级分类</el-button>
@@ -164,11 +164,6 @@ async function createFirstCategory({ name }: FirstCategoryRuleForm) {
 </template>
 
 <style scoped>
-.create-form {
-  width: 960px;
-  margin: 0 auto;
-}
-
 .header {
   display: flex;
   align-items: center;
