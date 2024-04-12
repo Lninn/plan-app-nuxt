@@ -25,8 +25,21 @@ export default function useCategories() {
     queryCategories();
   });
 
+  // 手动获取最新数据并更新
+  async function refreshCategories() {
+    try {
+      let { data } = await supabase
+        .from('categories')
+        .select('*')
+      categories.value = data || [];
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
   return {
     loading,
     categories,
+    refreshCategories,
   }
  }

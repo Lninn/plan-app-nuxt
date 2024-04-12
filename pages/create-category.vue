@@ -4,7 +4,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 
 const supabase = useSupabaseClient<Database>()
 
-const { categories, loading: categoriesLoading } = useCategories()
+const { categories, loading: categoriesLoading, refreshCategories } = useCategories()
 
 const loading = ref(false)
 
@@ -108,6 +108,7 @@ async function createFirstCategory({ name }: FirstCategoryRuleForm) {
     if (!error) {
       firstCategoryDialogFormVisible.value = false
       firstCategoryRuleFormRef.value?.resetFields()
+      await refreshCategories()
     } else {
       ElMessage.error(error.message)
     }
