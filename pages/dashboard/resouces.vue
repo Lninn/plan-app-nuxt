@@ -57,20 +57,18 @@ async function handleDeleteBatch() {
 async function deleteResource(id: string) {
   try {
     deleteLoading.value = true
-    const { data } = await useFetch('/api/resource', {
+    const data = await $fetch('/api/resource', {
       method: 'DELETE',
       params: { id },
     })
 
-    const resData = data.value
-    if (resData && resData.ok) {
+    if (data.ok) {
       ElMessage.success('删除成功')
       await mutate()
     }
   }
   catch (error) {
     ElMessage.error('删除失败')
-    console.log(JSON.stringify(error, null, 2))
   }
   finally {
     deleteLoading.value = false
@@ -147,14 +145,23 @@ async function deleteResource(id: string) {
           >
             编辑
           </el-button>
-          <el-button
-            size="small"
-            type="danger"
-            :loading="getDeleteLoading(scope.$index)"
-            @click="handleDelete(scope.$index, scope.row)"
+
+          <el-popconfirm
+            :title="`确定删除 \`${scope.row.name}\` 吗？`"
+            confirm-button-text="确定"
+            cancel-button-text="取消"
+            @confirm="handleDelete(scope.$index, scope.row)"
           >
-            删除
-          </el-button>
+            <template #reference>
+              <el-button
+                size="small"
+                type="danger"
+                :loading="getDeleteLoading(scope.$index)"
+              >
+                删除
+              </el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
