@@ -1,27 +1,36 @@
 <template>
   <nav class="nav">
-    <el-menu
-      :default-active="activeIndex"
-      class="el-menu-demo"
-      mode="horizontal"
-      @select="handleSelect"
-    >
-      <el-menu-item index="1">
-        主页
-      </el-menu-item>
-      <el-menu-item index="2">
-        分类
-      </el-menu-item>
-      <el-menu-item
-        index="3"
-        disabled
+    <div class="nav-wrap">
+      <el-menu
+        :default-active="activeIndex"
+        class="el-menu-demo"
+        mode="horizontal"
+        @select="handleSelect"
       >
-        TODO
-      </el-menu-item>
-    </el-menu>
-    <div style="width: 100%;" />
-    <preference-switch />
+        <el-menu-item index="1">
+          Processing Center
+        </el-menu-item>
+        <el-sub-menu index="2">
+          <template #title>
+            Workspace
+          </template>
+          <el-menu-item index="2-1">
+            资源管理
+          </el-menu-item>
+          <el-menu-item index="2-2">
+            分类管理
+          </el-menu-item>
+        </el-sub-menu>
+        <el-menu-item
+          index="3"
+          disabled
+        >
+          TODO
+        </el-menu-item>
+      </el-menu>
+    </div>
 
+    <PreferenceSwitch />
     <el-popconfirm
       v-if="user"
       title="确定退出登录吗？"
@@ -68,5 +77,14 @@ const logout = async () => {
   display: flex;
   align-items: center;
   margin-block-end: 24px;
+  background-color: var(--el-menu-bg-color);
+  padding: 0 24px;
+}
+.nav-wrap {
+  flex-grow: 1;
+
+  .el-menu {
+    border-width: 0;
+  }
 }
 </style>
