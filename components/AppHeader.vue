@@ -7,18 +7,18 @@
         mode="horizontal"
         @select="handleSelect"
       >
-        <el-menu-item index="1">
+        <el-menu-item index="index">
           Processing Center
         </el-menu-item>
-        <el-sub-menu index="2">
+        <el-sub-menu index="dashboard">
           <template #title>
             Workspace
           </template>
-          <el-menu-item index="2-1">
-            资源管理
+          <el-menu-item index="create-category">
+            分类管理
           </el-menu-item>
           <el-menu-item index="2-2">
-            分类管理
+            资源管理
           </el-menu-item>
         </el-sub-menu>
         <el-menu-item
@@ -50,17 +50,14 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-const router = useRouter()
-console.log(router)
+const activeIndex = ref('index')
+const handleSelect = (key: string, keyPath: string[]) => {
+  let pagePath = keyPath.join('/')
+  if (key === 'index') {
+    pagePath = '/'
+  }
 
-const activeIndex = ref('1')
-const handleSelect = (key: string) => {
-  if (key === '1') {
-    navigateTo('/')
-  }
-  if (key === '2') {
-    navigateTo('/tasks')
-  }
+  navigateTo(pagePath)
 }
 
 const client = useSupabaseClient()
