@@ -2,6 +2,8 @@
 import type { ElTable } from 'element-plus'
 import type { Tables } from '~/database.types'
 
+const updateDialogOpen = ref(false)
+const updateDialogRef = ref<{ setFormValue: (value: Tables<'resources'>) => void }>()
 const { resources, mutate, loading } = useResource({ random: false })
 const search = ref('')
 
@@ -34,7 +36,11 @@ const handleSelectionChange = (val: Tables<'resources'>[]) => {
 }
 
 const handleEdit = async (index: number, row: Tables<'resources'>) => {
-  console.log(index, row)
+  activePayload.index = index
+  activePayload.row = row
+
+  updateDialogRef.value?.setFormValue(row)
+  updateDialogOpen.value = true
 }
 
 const handleDelete = async (index: number, row: Tables<'resources'>) => {
@@ -181,6 +187,12 @@ async function deleteResource(id: string) {
         删除选中的 {{ multipleSelection.length }} 行
       </el-button>
     </div>
+    <ResourceController
+      ref="updateDialogRef"
+      v-model:visible="updateDialogOpen"
+      use-type="update"
+      @ok="mutate"
+    />
   </div>
 </template>
 

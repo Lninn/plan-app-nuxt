@@ -22,8 +22,9 @@ const { resources, mutate } = useResource({ random: false })
         <WebResource :record="record" />
       </template>
     </div>
-    <CreateResource
+    <ResourceController
       v-model:visible="createDialogOpen"
+      use-type="create"
       @ok="mutate"
     />
   </div>

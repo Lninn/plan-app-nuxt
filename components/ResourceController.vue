@@ -11,6 +11,14 @@ const createLoading = ref(false)
 const emit = defineEmits<{
   (e: 'ok'): void
 }>()
+defineProps<{
+  useType: 'create' | 'update'
+}>()
+defineExpose({
+  setFormValue(value: ResourceForm) {
+    updateFormValues(value)
+  },
+})
 
 interface ResourceForm {
   name: string
@@ -27,6 +35,15 @@ const resourceForm = reactive<ResourceForm>({
   categories: [],
   label: [],
 })
+
+function updateFormValues(record: ResourceForm) {
+  resourceForm.name = record.name
+  resourceForm.url = record.url
+  resourceForm.icon = record.icon
+  resourceForm.categories = record.categories
+  resourceForm.label = record.label
+}
+
 const resourceFormRef = ref<FormInstance>()
 const resourceFormRules = reactive<FormRules<ResourceForm>>({
   name: [
@@ -68,6 +85,7 @@ async function onConfirm(formEl: FormInstance | undefined) {
   })
 }
 
+// TODO 创建资源 | 更新资源
 async function createResource(payload: ResourceForm) {
   try {
     createLoading.value = true
@@ -95,15 +113,19 @@ async function createResource(payload: ResourceForm) {
 
 // 填充一个随机的资源
 function fillRandomResource() {
-  resourceForm.name = mockjs.mock('@ctitle')
-  resourceForm.url = mockjs.mock('@url')
-
+  const randomResource: ResourceForm = {
+    name: mockjs.mock('@ctitle'),
+    url: mockjs.mock('@url'),
+    icon: mockjs.Random.image('160x160', '#4A7BF7'),
+    label: createRandomLabel(),
+    categories: [],
+  }
   const category = getRandomCategory()
   if (category) {
-    resourceForm.categories = category
+    randomResource.categories = category
   }
 
-  resourceForm.label = createRandomLabel()
+  updateFormValues(randomResource)
 
   // TODO 手动触发验证
   resourceFormRef.value?.validateField('categories')
@@ -131,11 +153,14 @@ function getRandomIntInclusive(min: number, max: number) {
 <template>
   <el-dialog
     :model-value="visible"
-    title="新建资源"
+    :title="useType === 'create' ? '新建资源' : '编辑资源'"
     width="500"
     @close="onClose"
   >
-    <div class="header">
+    <div
+      v-if="useType === 'create'"
+      class="header"
+    >
       <el-button @click="fillRandomResource">
         填充随机资源
       </el-button>
@@ -208,7 +233,7 @@ function getRandomIntInclusive(min: number, max: number) {
           :loading="createLoading"
           @click="onConfirm(resourceFormRef)"
         >
-          确认
+          {{ useType === 'create' ? '创建' : '更新' }}
         </el-button>
       </div>
     </template>
