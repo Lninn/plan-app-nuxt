@@ -17,15 +17,14 @@ defineProps<{
       </div>
     </div>
     <div class="body">
-      <div class="label">
-        测表标签1
-      </div>
-      <div class="label">
-        测表标签2
-      </div>
-      <div class="label">
-        测表标签3
-      </div>
+      <template
+        v-for="labelTxt in record.label"
+        :key="labelTxt"
+      >
+        <div class="label">
+          {{ labelTxt }}
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -42,7 +41,7 @@ defineProps<{
   align-items: center;
 }
 .logo {
-  width: 100px;
+  width: 72px;
 }
 .title {
   font-size: 16px;

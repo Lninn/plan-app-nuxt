@@ -41,7 +41,7 @@ const resourceFormRules = reactive<FormRules<ResourceForm>>({
     { required: true, message: '请输入资源图标', trigger: 'change' },
   ],
   categories: [
-    { required: true, message: '请选择资源分类', trigger: 'change' },
+    { required: true, message: '请选择资源分类', trigger: ['change', 'blur'] },
   ],
   label: [
     { required: true, message: '请选择资源标签', trigger: 'change' },
@@ -110,8 +110,28 @@ function fillRandomResource() {
     resourceForm.categories = category
   }
 
-  const label = mockjs.mock('@cword(3, 5)')
-  resourceForm.label = [label]
+  resourceForm.label = createRandomLabel()
+
+  // TODO 手动触发验证
+  resourceFormRef.value?.validateField('categories')
+}
+
+function createRandomLabel(): string[] {
+  const randomCount = getRandomIntInclusive(3, 5)
+
+  const labels = []
+  for (let i = 0; i < randomCount; i++) {
+    const label = mockjs.mock('@cword(3, 5)')
+    labels.push(label)
+  }
+
+  return labels
+}
+
+function getRandomIntInclusive(min: number, max: number) {
+  const minCeiled = Math.ceil(min)
+  const maxFloored = Math.floor(max)
+  return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled) // The maximum is inclusive and the minimum is inclusive
 }
 </script>
 
