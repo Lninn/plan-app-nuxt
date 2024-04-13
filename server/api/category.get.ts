@@ -4,16 +4,27 @@ import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const client = await serverSupabaseClient<Database>(event)
-  const query = getQuery(event)
+  const queryParams = getQuery<{ id: number, name: string }>(event)
 
-  const { data, error } = await client
+  const filterById = queryParams.id
+  const filterByName = queryParams.name
+
+  let query = client
     .from('categories')
     .select('*')
-    .eq('name', query.name as string)
+
+  if (filterById) {
+    query = query.eq('id', filterById)
+  }
+  if (filterByName) {
+    query = query.eq('name', filterByName)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     throw createError({ statusMessage: error.message })
   }
 
-  return { ok: true, query, data }
+  return { ok: true, data }
 })
