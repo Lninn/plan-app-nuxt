@@ -31,19 +31,21 @@ defineProps<{
 
 <style scoped>
 .resource {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  background-color: #fff;
+  padding: 16px 24px;
+  border: 1px solid var(--shadow-color);
+  border-radius: var(--radius-2);
+  background-color: var(--surface-2);
 }
 .header {
   display: flex;
   align-items: center;
+  gap: 8px;
 }
 .logo {
   width: 72px;
 }
 .title {
+  color: var(--text-1);
   font-size: 16px;
 }
 .body {
@@ -51,9 +53,11 @@ defineProps<{
   gap: 8px;
 }
 .label {
+  font-size: 12px;
   padding: 3px 5px;
   border-radius: 3px;
-  color: #fff;
-  background-color: #666;
+  flex-shrink: 0;
+  color: var(--text-2);
+  background-color: var(--surface-4);
 }
 </style>

@@ -21,6 +21,7 @@
   "devDependencies": {
     "@element-plus/nuxt": "^1.0.8",
     "@nuxt/eslint-config": "^0.3.6",
+    "@nuxtjs/color-mode": "^3.4.0",
     "@nuxtjs/supabase": "^1.2.0",
     "@types/mockjs": "^1.0.10",
     "element-plus": "^2.6.3",

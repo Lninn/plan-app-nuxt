@@ -20,13 +20,21 @@
       </el-menu-item>
     </el-menu>
     <div style="width: 100%;" />
-    <el-button
+    <preference-switch />
+
+    <el-popconfirm
       v-if="user"
-      type="primary"
-      @click="logout"
+      title="确定退出登录吗？"
+      @confirm="logout"
     >
-      退出
-    </el-button>
+      <template #reference>
+        <el-button
+          type="primary"
+        >
+          退出
+        </el-button>
+      </template>
+    </el-popconfirm>
   </nav>
 </template>
 
