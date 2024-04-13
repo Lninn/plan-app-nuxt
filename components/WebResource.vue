@@ -1,3 +1,11 @@
+<script setup lang="ts">
+import type { Tables } from '~/database.types'
+
+defineProps<{
+  record: Tables<'resources'>
+}>()
+</script>
+
 <template>
   <div class="resource">
     <div class="header">
@@ -5,7 +13,7 @@
         <img src="http://mockjs.com/assets/img/logo-2.svg">
       </div>
       <div class="title">
-        Title
+        {{ record.name }}
       </div>
     </div>
     <div class="body">

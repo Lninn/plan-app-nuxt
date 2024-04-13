@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
+import mockjs from 'mockjs'
+import type { Database } from '~/database.types'
 
-const { cascaderCategories } = useCategories()
+const { cascaderCategories, getRandomCategory } = useCategories()
+
+const supabase = useSupabaseClient<Database>()
 
 const visible = defineModel('visible', { type: Boolean, default: false })
+const loading = ref(false)
+
+const emit = defineEmits<{
+  (e: 'ok'): void
+}>()
 
 interface ResourceForm {
   name: string
@@ -38,7 +47,6 @@ const resourceFormRules = reactive<FormRules<ResourceForm>>({
     { required: true, message: '请选择资源标签', trigger: 'change' },
   ],
 })
-const formLabelWidth = '100px'
 
 const cascaderProps = {
   expandTrigger: 'hover' as const,
@@ -57,13 +65,53 @@ async function onConfirm(formEl: FormInstance | undefined) {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (valid) {
-      visible.value = false
-      console.log('submit!', resourceForm)
+      createResource(resourceForm)
     }
     else {
       console.log('error submit!', fields)
     }
   })
+}
+
+async function createResource(payload: ResourceForm) {
+  try {
+    loading.value = true
+    const { error } = await supabase
+      .from('resources')
+      .insert([
+        payload,
+      ])
+      .select()
+    if (!error) {
+      ElMessage.success('创建成功')
+      visible.value = false
+      resourceFormRef.value?.resetFields()
+      emit('ok')
+    }
+    else {
+      ElMessage.error(error.message)
+    }
+  }
+  catch (error) {
+    console.error(error)
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+// 填充一个随机的资源
+function fillRandomResource() {
+  resourceForm.name = mockjs.mock('@ctitle')
+  resourceForm.url = mockjs.mock('@url')
+
+  const category = getRandomCategory()
+  if (category) {
+    resourceForm.categories = category
+  }
+
+  const label = mockjs.mock('@cword(3, 5)')
+  resourceForm.label = [label]
 }
 </script>
 
@@ -74,6 +122,11 @@ async function onConfirm(formEl: FormInstance | undefined) {
     width="500"
     @close="onClose"
   >
+    <div class="header">
+      <el-button @click="fillRandomResource">
+        填充随机资源
+      </el-button>
+    </div>
     <el-form
       ref="resourceFormRef"
       :model="resourceForm"
@@ -81,7 +134,6 @@ async function onConfirm(formEl: FormInstance | undefined) {
     >
       <el-form-item
         label="名称"
-        :label-width="formLabelWidth"
         prop="name"
       >
         <el-input
@@ -91,7 +143,6 @@ async function onConfirm(formEl: FormInstance | undefined) {
       </el-form-item>
       <el-form-item
         label="URL"
-        :label-width="formLabelWidth"
         prop="url"
       >
         <el-input
@@ -101,7 +152,6 @@ async function onConfirm(formEl: FormInstance | undefined) {
       </el-form-item>
       <el-form-item
         label="图标"
-        :label-width="formLabelWidth"
         prop="icon"
       >
         <UrlIconPicker
@@ -111,7 +161,6 @@ async function onConfirm(formEl: FormInstance | undefined) {
       </el-form-item>
       <el-form-item
         label="分类"
-        :label-width="formLabelWidth"
         prop="categories"
       >
         <el-cascader
@@ -123,7 +172,6 @@ async function onConfirm(formEl: FormInstance | undefined) {
       </el-form-item>
       <el-form-item
         label="标签"
-        :label-width="formLabelWidth"
         prop="label"
       >
         <el-select
@@ -144,6 +192,7 @@ async function onConfirm(formEl: FormInstance | undefined) {
         </el-button>
         <el-button
           type="primary"
+          :loading="loading"
           @click="onConfirm(resourceFormRef)"
         >
           确认
@@ -152,3 +201,10 @@ async function onConfirm(formEl: FormInstance | undefined) {
     </template>
   </el-dialog>
 </template>
+
+<style scoped>
+.header {
+  text-align: right;
+  margin: 16px 0;
+}
+</style>

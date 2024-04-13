@@ -87,6 +87,30 @@ export default function useCategories() {
     )
   })
 
+  // 在 cascadeCategories 中随机生成一个选项, 包含一级和二级
+  // 返回一级选项的ID 和 随机二级选项的ID
+  function getRandomCategory(): [number, number] | null {
+    const options = nestedCategories.value
+
+    const randomIndex = Math.floor(Math.random() * options.length)
+    const option = options[randomIndex]
+
+    if (option.children) {
+      const randomChildIndex = Math.floor(Math.random() * option.children.length)
+      const child = option.children[randomChildIndex]
+
+      return child
+        ? [
+            option.id,
+            child.id,
+          ]
+        : null
+    }
+    else {
+      return null
+    }
+  }
+
   // 手动获取最新数据并更新
   async function refreshCategories() {
     try {
@@ -106,5 +130,6 @@ export default function useCategories() {
     nestedCategories,
     cascaderCategories: cascadeCategories,
     refreshCategories,
+    getRandomCategory,
   }
 }

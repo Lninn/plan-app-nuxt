@@ -1,25 +1,7 @@
 <script setup lang="ts">
-import mockjs from 'mockjs'
-
 const createDialogOpen = ref(false)
 
-const data = mockjs.mock({
-  'list|40': [{
-    'id|+1': 1,
-    'name': '@cname',
-    'age|18-25': 0,
-    'address': '@county(true)',
-    'date': '@datetime',
-    'isMale': '@boolean',
-    'isVip': '@boolean',
-    'isAdmin': '@boolean',
-    'isSuperAdmin': '@boolean',
-    'isDeleted': '@boolean',
-    'isDisabled': '@boolean',
-    'isLocked': '@boolean',
-    'isOnline': '@boolean',
-  }],
-})
+const { resources, mutate } = useResource({ random: false })
 </script>
 
 <template>
@@ -34,15 +16,16 @@ const data = mockjs.mock({
     </div>
     <div class="list">
       <template
-        v-for="record of data.list"
+        v-for="record of resources"
         :key="record.id"
       >
-        <WebResource />
+        <WebResource :record="record" />
       </template>
     </div>
     <CreateResource
       v-model:visible="createDialogOpen"
-    />d
+      @ok="mutate"
+    />
   </div>
 </template>
 

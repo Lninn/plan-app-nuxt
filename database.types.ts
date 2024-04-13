@@ -33,6 +33,33 @@ export type Database = {
         }
         Relationships: []
       }
+      resources: {
+        Row: {
+          categories: number[]
+          icon: string
+          id: number
+          label: string[]
+          name: string
+          url: string
+        }
+        Insert: {
+          categories: number[]
+          icon: string
+          id?: number
+          label: string[]
+          name: string
+          url: string
+        }
+        Update: {
+          categories?: number[]
+          icon?: string
+          id?: number
+          label?: string[]
+          name?: string
+          url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

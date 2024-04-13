@@ -37,8 +37,13 @@ const router = useRouter()
 console.log(router)
 
 const activeIndex = ref('1')
-const handleSelect = (key: string, keyPath: string[]) => {
-  console.log(key, keyPath)
+const handleSelect = (key: string) => {
+  if (key === '1') {
+    navigateTo('/')
+  }
+  if (key === '2') {
+    navigateTo('/tasks')
+  }
 }
 
 const client = useSupabaseClient()
