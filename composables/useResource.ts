@@ -23,7 +23,7 @@ function createRandomResource() {
   return data.list
 }
 
-export default function useCategories({ random }: { random: boolean }) {
+export default function useResource({ random }: { random: boolean }) {
   const supabase = useSupabaseClient<Database>()
 
   const loading = ref(false)
@@ -55,6 +55,6 @@ export default function useCategories({ random }: { random: boolean }) {
   return {
     loading,
     resources: random ? randomResource : resources,
-    mutate: () => queryResources(),
+    mutate: async () => queryResources(),
   }
 }

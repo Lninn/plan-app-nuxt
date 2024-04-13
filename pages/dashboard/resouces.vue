@@ -1,15 +1,49 @@
 <script setup lang="ts">
 import type { Tables } from '~/database.types'
 
-const { resources, loading } = useResource({ random: false })
+const { resources, mutate, loading } = useResource({ random: false })
 const search = ref('')
+
+const deleteLoading = ref(false)
+const activePayload = reactive<{ index: number | null, row: Tables<'resources'> | null }>({
+  index: null,
+  row: null,
+})
+function getDeleteLoading(index: number) {
+  return deleteLoading.value && activePayload.index === index
+}
 
 const handleEdit = async (index: number, row: Tables<'resources'>) => {
   console.log(index, row)
 }
 
 const handleDelete = async (index: number, row: Tables<'resources'>) => {
-  console.log(index, row)
+  activePayload.index = index
+  activePayload.row = row
+
+  await deleteResource(row.id)
+}
+
+async function deleteResource(id: number) {
+  try {
+    deleteLoading.value = true
+    const { data } = await useFetch('/api/resource', {
+      method: 'DELETE',
+      params: { id },
+    })
+
+    const resData = data.value
+    if (resData && resData.ok) {
+      ElMessage.success('删除成功')
+      await mutate()
+    }
+  }
+  catch (error) {
+    console.log(JSON.stringify(error, null, 2))
+  }
+  finally {
+    deleteLoading.value = false
+  }
 }
 </script>
 
@@ -36,6 +70,12 @@ const handleDelete = async (index: number, row: Tables<'resources'>) => {
           </div>
         </template>
       </el-table-column>
+
+      <el-table-column
+        prop="id"
+        label="Id"
+        width="60"
+      />
 
       <el-table-column
         prop="categories"
@@ -73,6 +113,7 @@ const handleDelete = async (index: number, row: Tables<'resources'>) => {
           <el-button
             size="small"
             type="danger"
+            :loading="getDeleteLoading(scope.$index)"
             @click="handleDelete(scope.$index, scope.row)"
           >
             删除
