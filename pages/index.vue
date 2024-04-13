@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import mockjs from 'mockjs'
 
+const createDialogOpen = ref(false)
+
 const data = mockjs.mock({
   'list|40': [{
     'id|+1': 1,
@@ -23,7 +25,10 @@ const data = mockjs.mock({
 <template>
   <div>
     <div class="header">
-      <el-button type="primary">
+      <el-button
+        type="primary"
+        @click="createDialogOpen = true"
+      >
         新增数据
       </el-button>
     </div>
@@ -35,6 +40,9 @@ const data = mockjs.mock({
         <WebResource />
       </template>
     </div>
+    <CreateResource
+      v-model:visible="createDialogOpen"
+    />d
   </div>
 </template>
 
