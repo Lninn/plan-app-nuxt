@@ -6,10 +6,10 @@ const model = defineModel({ type: String, required: true })
 const isDefault = ref(true)
 
 const img = mockjs.Random.image('160x160', '#4A7BF7')
-const imgUrl = computed(() => isDefault.value ? img : 'http://mockjs.com/assets/img/logo-2.svg')
+const imgUrl = computed(() => isDefault.value ? img : 'https://cn.vuejs.org/logo.svg')
 
 watchEffect(() => {
-  model.value = isDefault.value ? img : 'http://mockjs.com/assets/img/logo-2.svg'
+  model.value = isDefault.value ? img : 'https://cn.vuejs.org/logo.svg'
 })
 </script>
 
