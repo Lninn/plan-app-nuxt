@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import mockjs from 'mockjs'
-import type { Database } from '~/database.types'
+import { FetchError } from 'ofetch'
 
 const { cascaderCategories, getRandomCategory } = useCategories()
 
-const supabase = useSupabaseClient<Database>()
-
 const visible = defineModel('visible', { type: Boolean, default: false })
-const loading = ref(false)
+const createLoading = ref(false)
 
 const emit = defineEmits<{
   (e: 'ok'): void
@@ -63,40 +61,35 @@ function onCancel() {
 
 async function onConfirm(formEl: FormInstance | undefined) {
   if (!formEl) return
-  await formEl.validate((valid, fields) => {
+  await formEl.validate((valid) => {
     if (valid) {
       createResource(resourceForm)
-    }
-    else {
-      console.log('error submit!', fields)
     }
   })
 }
 
 async function createResource(payload: ResourceForm) {
   try {
-    loading.value = true
-    const { error } = await supabase
-      .from('resources')
-      .insert([
-        payload,
-      ])
-      .select()
-    if (!error) {
+    createLoading.value = true
+    const data = await $fetch('/api/resource', {
+      method: 'POST',
+      body: payload,
+    })
+
+    if (data.ok) {
       ElMessage.success('创建成功')
       visible.value = false
       resourceFormRef.value?.resetFields()
       emit('ok')
     }
-    else {
-      ElMessage.error(error.message)
-    }
   }
   catch (error) {
-    console.error(error)
+    if (error instanceof FetchError) {
+      ElMessage.error(error.statusMessage)
+    }
   }
   finally {
-    loading.value = false
+    createLoading.value = false
   }
 }
 
@@ -212,7 +205,7 @@ function getRandomIntInclusive(min: number, max: number) {
         </el-button>
         <el-button
           type="primary"
-          :loading="loading"
+          :loading="createLoading"
           @click="onConfirm(resourceFormRef)"
         >
           确认
