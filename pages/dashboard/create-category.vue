@@ -45,6 +45,10 @@ const rules = reactive<FormRules<RuleForm>>({
   ],
 })
 
+function getBack() {
+  navigateTo('/dashboard/categories')
+}
+
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
@@ -73,7 +77,7 @@ async function createSecondCategory(payload: RuleForm) {
 
     if (!error) {
       ruleFormRef.value?.resetFields()
-      navigateTo('/tasks')
+      getBack()
     }
     else {
       ElMessage.error(error.message)
@@ -180,7 +184,7 @@ async function createFirstCategory({ name }: FirstCategoryRuleForm) {
         >
           创建
         </el-button>
-        <el-button @click="navigateTo('/tasks')">
+        <el-button @click="getBack">
           取消
         </el-button>
       </el-form-item>

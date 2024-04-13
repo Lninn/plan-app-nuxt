@@ -14,11 +14,8 @@
           <template #title>
             Workspace
           </template>
-          <el-menu-item index="create-category">
+          <el-menu-item index="categories">
             分类管理
-          </el-menu-item>
-          <el-menu-item index="2-2">
-            资源管理
           </el-menu-item>
         </el-sub-menu>
         <el-menu-item
@@ -50,11 +47,18 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
+const router = useRouter()
+const routes = router.getRoutes()
+console.log(routes)
+
 const activeIndex = ref('index')
 const handleSelect = (key: string, keyPath: string[]) => {
   let pagePath = keyPath.join('/')
   if (key === 'index') {
     pagePath = '/'
+  }
+  else {
+    pagePath = `/${pagePath}`
   }
 
   navigateTo(pagePath)
