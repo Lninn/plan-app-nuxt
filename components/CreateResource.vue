@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 
+const { cascaderCategories } = useCategories()
+
 const visible = defineModel('visible', { type: Boolean, default: false })
 
 interface ResourceForm {
@@ -37,6 +39,10 @@ const resourceFormRules = reactive<FormRules<ResourceForm>>({
   ],
 })
 const formLabelWidth = '100px'
+
+const cascaderProps = {
+  expandTrigger: 'hover' as const,
+}
 
 function onClose() {
   visible.value = false
@@ -108,8 +114,10 @@ async function onConfirm(formEl: FormInstance | undefined) {
         :label-width="formLabelWidth"
         prop="categories"
       >
-        <el-select
+        <el-cascader
           v-model="resourceForm.categories"
+          :options="cascaderCategories"
+          :props="cascaderProps"
           placeholder="请选择资源分类"
         />
       </el-form-item>
