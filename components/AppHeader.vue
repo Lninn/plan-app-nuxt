@@ -50,10 +50,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-const router = useRouter()
-const routes = router.getRoutes()
-console.log(routes)
-
 const activeIndex = ref('index')
 const handleSelect = (key: string, keyPath: string[]) => {
   let pagePath = keyPath.join('/')
