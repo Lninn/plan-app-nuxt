@@ -14,6 +14,9 @@
           <template #title>
             Workspace
           </template>
+          <el-menu-item index="resouces">
+            资源管理
+          </el-menu-item>
           <el-menu-item index="categories">
             分类管理
           </el-menu-item>
