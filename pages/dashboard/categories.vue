@@ -175,6 +175,11 @@ function formatDate(date: string): string {
       style="width: 100%"
     >
       <el-table-column
+        prop="id"
+        label="Id"
+        width="100"
+      />
+      <el-table-column
         prop="name"
         label="名称"
         width="180"

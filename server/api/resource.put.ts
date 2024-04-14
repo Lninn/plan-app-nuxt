@@ -19,7 +19,46 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  ensureResourceExists(postData.id)
+  // 分类信息处理
+  async function ensureCategoryExists(categories: number[] | null) {
+    if (!categories || Array.isArray(categories) === false) {
+      throw createError({ statusMessage: 'categories filed is required.' })
+    }
+
+    const [firstCategory, secondCategory] = categories
+    if (firstCategory) {
+      const { data, error } = await client
+        .from('categories')
+        .select()
+        .eq('id', firstCategory)
+        .eq('level', 1)
+
+      if (error) {
+        throw createError({ statusMessage: error.message })
+      }
+      if (!data || data.length === 0) {
+        throw createError({ statusMessage: `category ${firstCategory} not found.` })
+      }
+    }
+    if (secondCategory) {
+      const { data, error } = await client
+        .from('categories')
+        .select()
+        .eq('id', secondCategory)
+        .eq('parent_id', firstCategory)
+        .eq('level', 2)
+
+      if (error) {
+        throw createError({ statusMessage: error.message })
+      }
+      if (!data || data.length === 0) {
+        throw createError({ statusMessage: `category ${secondCategory} not found.` })
+      }
+    }
+  }
+
+  await ensureResourceExists(postData.id)
+  await ensureCategoryExists(postData.categories)
 
   const { data, error } = await client
     .from('resources')
