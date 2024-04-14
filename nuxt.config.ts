@@ -15,9 +15,6 @@ export default defineNuxtConfig({
       ],
     },
   },
-  css: [
-    '~/assets/main.css',
-  ],
   supabase: {
     redirectOptions: {
       login: '/login',
@@ -25,7 +22,12 @@ export default defineNuxtConfig({
       cookieRedirect: true,
     },
   },
-  elementPlus: {},
+  elementPlus: {
+    themes: ['dark'],
+  },
+  css: [
+    '~/assets/main.css',
+  ],
   eslint: {
     config: {
       stylistic: {
@@ -37,6 +39,6 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'system',
     fallback: 'light',
-    classSuffix: '-theme',
+    classSuffix: '',
   },
 })

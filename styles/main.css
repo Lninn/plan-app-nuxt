@@ -1,0 +1,30 @@
+:where(
+  [data-theme="dark"],
+  .dark,
+  .dark-theme
+) {
+  color-scheme: dark;
+
+  --surface-1: #242629;
+  
+  --text-1: #fffffe;
+  --surface-2: #16161a;
+
+  --text-2: #94a1b2;
+  --surface-3: #010101;
+}
+html.dark {
+  /* 自定义深色背景颜色 */
+  --el-color-primary: #7f5af0;
+  --el-color-white: #fffffe;
+}
+
+:where(
+  [data-theme="light"],
+  .light,
+  .light-theme
+) {
+  color-scheme: light;
+
+  --surface-1: blue;
+}

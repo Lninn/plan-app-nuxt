@@ -5,7 +5,7 @@ const { resources, mutate } = useResource({ random: false })
 </script>
 
 <template>
-  <div>
+  <div class="dashboard">
     <div class="header">
       <el-button
         type="primary"
@@ -31,6 +31,10 @@ const { resources, mutate } = useResource({ random: false })
 </template>
 
 <style scoped>
+.dashboard {
+  padding: 24px;
+}
+
 .header {
   margin-block-end: 16px;
   text-align: right;

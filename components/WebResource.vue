@@ -4,6 +4,10 @@ import type { Tables } from '~/database.types'
 defineProps<{
   record: Tables<'resources'>
 }>()
+
+function openPage(url: string) {
+  window.open(url)
+}
 </script>
 
 <template>
@@ -13,11 +17,10 @@ defineProps<{
         <img :src="record.icon">
       </div>
       <div class="title">
-        <a
-          :href="record.url"
-          target="_blank"
-          :title="record.name"
-        >{{ record.name }}</a>
+        <span
+          class="title-txt"
+          @click="openPage(record.url)"
+        >{{ record.name }}</span>
       </div>
     </div>
     <div class="body">
@@ -35,18 +38,18 @@ defineProps<{
 
 <style scoped>
 .resource {
-  padding: 8px 16px;
-  border: 1px solid var(--shadow-color);
+  padding: 12px 8px;
+  border: 3px solid #010101;
   border-radius: var(--radius-2);
   background-color: var(--surface-2);
 }
 .header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 }
 .logo {
-  width: 72px;
+  width: 48px;
   flex-shrink: 0;
   img {
     border-radius: var(--radius-2);
@@ -60,19 +63,24 @@ defineProps<{
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+
+  cursor: pointer;
+}
+.title:hover {
+  color: #7f5af0;
 }
 .body {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-block-start: 8px;
+  margin-block-start: 16px;
 }
 .label {
-  font-size: 12px;
-  padding: 3px 5px;
+  font-size: 14px;
+  padding: 5px 10px;
   border-radius: 3px;
   flex-shrink: 0;
   color: var(--text-2);
-  background-color: var(--surface-4);
+  background-color: var(--surface-3);
 }
 </style>

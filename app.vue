@@ -6,3 +6,7 @@
     </PageContainer>
   </AppContainer>
 </template>
+
+<style>
+@import "~/styles/main.css";
+</style>
