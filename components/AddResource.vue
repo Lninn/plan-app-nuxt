@@ -64,6 +64,19 @@
         </el-select>
       </el-form-item>
 
+      <el-form-item
+        label="预览"
+      >
+        <div
+          class="preview"
+        >
+          <img
+            :src="ruleForm.icon"
+            alt=""
+          >
+        </div>
+      </el-form-item>
+
       <el-form-item>
         <el-button
           type="primary"
@@ -207,5 +220,8 @@ const resetForm = (formEl: FormInstance | undefined) => {
   justify-content: flex-end;
   margin-block-start: 24px;
   margin-block-end: 24px;
+}
+.preview {
+  width: 48px;
 }
 </style>
