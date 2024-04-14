@@ -17,6 +17,11 @@ const isDefault = ref(false)
       active-text="从 URL 解析"
       :disabled="disabled"
     />
+    <el-input
+      v-model="model"
+      :disabled="isDefault"
+      placeholder="请输入图片地址"
+    />
     <div class="icon">
       <img :src="model">
     </div>

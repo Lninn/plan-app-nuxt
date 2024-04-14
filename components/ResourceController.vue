@@ -99,6 +99,7 @@ async function updateResource(payload: ResourceForm) {
     name,
     categories,
     label,
+    icon,
   } = payload
   try {
     createLoading.value = true
@@ -109,6 +110,7 @@ async function updateResource(payload: ResourceForm) {
         name,
         categories,
         label,
+        icon,
       },
     })
 
@@ -236,10 +238,15 @@ function getRandomIntInclusive(min: number, max: number) {
         label="图标"
         prop="icon"
       >
-        <UrlIconPicker
+        <el-input
+          v-if="useType === 'update'"
           v-model="resourceForm.icon"
-          :disabled="useType === 'update'"
+        />
+        <UrlIconPicker
+          v-else
+          v-model="resourceForm.icon"
           placeholder="请输入资源图标"
+          :disabled="false"
         />
       </el-form-item>
       <el-form-item
