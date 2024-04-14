@@ -3,6 +3,14 @@
     v-model="open"
     @close="open = false"
   >
+    <div class="header">
+      <el-button
+        :loading="parseLoading"
+        @click="parseIcon"
+      >
+        从 URL 中解析图标
+      </el-button>
+    </div>
     <el-form
       ref="ruleFormRef"
       style="max-width: 600px"
@@ -32,6 +40,21 @@
         prop="icon"
       >
         <el-input v-model="ruleForm.icon" />
+      </el-form-item>
+
+      <el-form-item
+        label="资源标签"
+        prop="label"
+      >
+        <el-select
+          v-model="ruleForm.label"
+          multiple
+          filterable
+          allow-create
+          default-first-option
+          :reserve-keyword="false"
+          placeholder="请选择资源标签"
+        />
       </el-form-item>
 
       <el-form-item>
@@ -64,6 +87,7 @@ interface RuleForm {
   name: string
   url: string
   icon: string
+  label: string[]
 }
 
 const loading = ref(false)
@@ -73,6 +97,7 @@ const ruleForm = reactive<RuleForm>({
   name: '',
   url: '',
   icon: '',
+  label: [],
 })
 
 const rules = reactive<FormRules<RuleForm>>({
@@ -87,7 +112,42 @@ const rules = reactive<FormRules<RuleForm>>({
     { required: true, message: '请输入资源图标', trigger: 'change' },
     { type: 'url', message: '请输入正确的资源图标地址', trigger: 'change' },
   ],
+  label: [
+    { required: true, message: '请输入资源标签', trigger: 'change' },
+    { type: 'array', min: 1, message: '请输入至少一个标签', trigger: 'change' },
+  ],
 })
+
+// parse
+const parseLoading = ref(false)
+
+async function parseIcon() {
+  const url = ruleForm.url
+  if (!url) {
+    ElMessage.error('请输入资源地址')
+    return
+  }
+
+  try {
+    parseLoading.value = true
+    const data = await $fetch('/api/data', {
+      method: 'GET',
+      params: { url },
+    })
+
+    if (data.ok) {
+      ruleForm.icon = data.url
+    }
+  }
+  catch (error) {
+    if (error instanceof FetchError) {
+      ElMessage.error(error.statusMessage)
+    }
+  }
+  finally {
+    parseLoading.value = false
+  }
+}
 
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -109,7 +169,6 @@ async function CreateResource() {
       body: {
         ...ruleForm,
         categories: [44, 46],
-        label: ['todo'],
       },
     })
     if (res.ok) {
@@ -133,3 +192,12 @@ const resetForm = (formEl: FormInstance | undefined) => {
   formEl.resetFields()
 }
 </script>
+
+<style scoped>
+.header {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: 24px;
+  margin-block-end: 24px;
+}
+</style>
