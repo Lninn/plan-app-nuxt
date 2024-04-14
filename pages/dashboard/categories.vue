@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { dayjs } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
-import type { Database, Tables } from '~/database.types'
+import { FetchError } from 'ofetch'
 
-const supabase = useSupabaseClient<Database>()
-const { categories: originalCategories, loading, refreshCategories } = useCategories()
+const { nestedCategories, loading, refreshCategories } = useCategories()
 
 interface EditDialogForm {
   name: string
@@ -37,41 +36,7 @@ interface NestedCategory {
   children?: NestedCategory[]
 }
 
-function convertToNestedListRecursive(items: Tables<'categories'>[]): NestedCategory[] {
-  const result: NestedCategory[] = []
-
-  for (const item of items) {
-    let targetParent = result.find(r => r.id === item.parent_id)
-
-    if (!targetParent) {
-      targetParent = { id: item.id, name: item.name, level: item.level, createdAt: item.created_at, children: [] }
-      result.push(targetParent)
-    }
-
-    if (targetParent.id !== item.id) {
-      if (!targetParent.children) {
-        targetParent.children = []
-      }
-
-      const nestedItem: NestedCategory = { id: item.id, name: item.name, level: item.level, createdAt: item.created_at, children: [] }
-      targetParent.children.push(nestedItem)
-
-      // 递归处理子节点
-      const childItems = items.filter(i => i.parent_id === item.id)
-      if (childItems.length > 0) {
-        nestedItem.children = convertToNestedListRecursive(childItems)
-      }
-    }
-  }
-
-  // 返回所有顶级分类（parent_id 为 null 或 undefined）
-  return result.filter(category => category.id !== null)
-}
-
 const search = ref('')
-const nestedCategories = computed(() =>
-  convertToNestedListRecursive(originalCategories.value),
-)
 
 async function onEditDialogFormSubmit(formEl: FormInstance | undefined) {
   if (!formEl) return
@@ -85,34 +50,32 @@ async function onEditDialogFormSubmit(formEl: FormInstance | undefined) {
   })
 }
 
-async function editCategory(nextState: EditDialogForm) {
+async function editCategory(payload: EditDialogForm) {
   const id = activeRow.value?.id
   if (!id) return
 
   try {
     updateLoading.value = true
-    const { error } = await supabase
-      .from('categories')
-      .update(nextState)
-      .eq('id', id)
-      .select()
+    const data = await $fetch('/api/category', {
+      method: 'PUT',
+      body: { id, ...payload },
+    })
 
-    if (error) {
-      ElMessage.error(error.message)
-    }
-    else {
+    if (data.ok) {
       ElMessage.success('更新成功')
       editDialogFormVisible.value = false
+      activeIndex.value = undefined
+      activeRow.value = undefined
       await refreshCategories()
     }
   }
   catch (error) {
-    console.log(error)
+    if (error instanceof FetchError) {
+      ElMessage.error(error.statusMessage)
+    }
   }
   finally {
     updateLoading.value = false
-    activeIndex.value = undefined
-    activeRow.value = undefined
   }
 }
 
@@ -128,21 +91,21 @@ const handleDelete = async (index: number, row: NestedCategory) => {
   try {
     activeIndex.value = index
     actionLoading.value = true
-    const { error } = await supabase
-      .from('categories')
-      .delete()
-      .eq('id', row.id)
+    const data = await $fetch('/api/category', {
+      method: 'DELETE',
+      params: { id: row.id },
+    })
 
-    if (error) {
-      ElMessage.error(error.message)
-    }
-    else {
+    if (data.ok) {
       ElMessage.success('删除成功')
       await refreshCategories()
     }
   }
   catch (error) {
     console.log(error)
+    if (error instanceof FetchError) {
+      ElMessage.error(error.statusMessage)
+    }
   }
   finally {
     actionLoading.value = false
@@ -227,14 +190,20 @@ function formatDate(date: string): string {
           >
             编辑
           </el-button>
-          <el-button
-            size="small"
-            type="danger"
-            :loading="getActionLoading(scope.$index)"
-            @click="handleDelete(scope.$index, scope.row)"
+          <el-popconfirm
+            :title="`确认删除 ${scope.row.name} 吗？`"
+            @confirm="handleDelete(scope.$index, scope.row)"
           >
-            删除
-          </el-button>
+            <template #reference>
+              <el-button
+                size="small"
+                type="danger"
+                :loading="getActionLoading(scope.$index)"
+              >
+                删除
+              </el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>

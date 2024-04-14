@@ -4,10 +4,11 @@ import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
   const client = await serverSupabaseClient<Database>(event)
-  const queryParams = getQuery<{ id: number, name: string }>(event)
+  const queryParams = getQuery<{ id: number, name: string, level: 1 | 2 }>(event)
 
   const filterById = queryParams.id
   const filterByName = queryParams.name
+  const filterByLevel = queryParams.level
 
   let query = client
     .from('categories')
@@ -18,6 +19,9 @@ export default defineEventHandler(async (event) => {
   }
   if (filterByName) {
     query = query.eq('name', filterByName)
+  }
+  if (filterByLevel) {
+    query = query.eq('level', filterByLevel)
   }
 
   const { data, error } = await query

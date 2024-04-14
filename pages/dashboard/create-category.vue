@@ -6,6 +6,8 @@ const supabase = useSupabaseClient<Database>()
 
 const { categories, loading: categoriesLoading, refreshCategories } = useCategories()
 
+const firstCategories = computed(() => categories.value?.filter(c => c && c.level === 1))
+
 const loading = ref(false)
 
 interface FirstCategoryRuleForm {
@@ -160,7 +162,7 @@ async function createFirstCategory({ name }: FirstCategoryRuleForm) {
           placeholder="请选择一级分类名称"
         >
           <el-option
-            v-for="item in categories"
+            v-for="item in firstCategories"
             :key="item.id"
             :label="item.name"
             :value="item.id"

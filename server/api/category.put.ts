@@ -19,8 +19,8 @@ export default defineEventHandler(async (event) => {
     return category
   }
 
-  if (!postParams.id) {
-    throw createError({ statusMessage: 'id is required', statusCode: 400 })
+  if (!postParams || !postParams.id) {
+    throw createError({ statusMessage: 'Id filed is required.', statusCode: 400 })
   }
   const queryId = Number(postParams.id)
   if (!Number.isInteger(queryId)) {
