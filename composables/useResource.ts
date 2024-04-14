@@ -1,5 +1,6 @@
 import mockjs from 'mockjs'
-import type { Database, Tables } from '~/database.types'
+import { FetchError } from 'ofetch'
+import type { Tables } from '~/database.types'
 
 function createRandomResource() {
   const data = mockjs.mock({
@@ -24,8 +25,6 @@ function createRandomResource() {
 }
 
 export default function useResource({ random }: { random: boolean }) {
-  const supabase = useSupabaseClient<Database>()
-
   const loading = ref(false)
   const resources = ref<Tables<'resources'>[]>([])
 
@@ -34,14 +33,18 @@ export default function useResource({ random }: { random: boolean }) {
   async function queryResources() {
     try {
       loading.value = true
-      const { data } = await supabase
-        .from('resources')
-        .select('*')
+      const queryRes = await $fetch('/api/resource', {
+        method: 'GET',
+      })
 
-      resources.value = data || []
+      if (queryRes.ok) {
+        resources.value = queryRes.data || []
+      }
     }
     catch (error) {
-      console.log('error', error)
+      if (error instanceof FetchError) {
+        ElMessage.error(error.statusMessage)
+      }
     }
     finally {
       loading.value = false

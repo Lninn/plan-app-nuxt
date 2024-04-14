@@ -42,5 +42,5 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusMessage: error.message })
   }
 
-  return { ok: true, data, filterByCategory }
+  return { ok: true, data }
 })
