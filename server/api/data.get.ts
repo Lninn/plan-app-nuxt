@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
     return `${urlObj.protocol}//${urlObj.host}`
   }
 
-  const iSstartWithHttpOrHttps = url.startsWith('http://') || url.startsWith('https://')
+  const iSstartWithHttpOrHttps = url ? url.startsWith('http://') || url.startsWith('https://') : false
   if (url && !iSstartWithHttpOrHttps) {
     const rootUrl = getRootUrl(queryParams.url)
     url = `${rootUrl}${url}`
