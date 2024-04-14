@@ -10,6 +10,12 @@ const updateDialogRef = ref<{ setFormValue: (value: Tables<'resources'>) => void
 const { resources, mutate, loading } = useResource({ random: false })
 const search = ref('')
 
+// 获取所有的标签，不能有重复的值
+const label = computed(() => {
+  const labels = resources.value.map(d => d.label).flat() ?? []
+  return [...new Set(labels)]
+})
+
 const deleteLoading = ref(false)
 const activePayload = reactive<{ index: number | null, row: Tables<'resources'> | null }>({
   index: null,
@@ -221,6 +227,7 @@ function formatDate(date: string): string {
     />
     <AddResource
       v-model:open="addOpen"
+      :label="label"
       @ok="mutate"
     />
   </div>

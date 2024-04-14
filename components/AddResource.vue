@@ -54,7 +54,14 @@
           default-first-option
           :reserve-keyword="false"
           placeholder="请选择资源标签"
-        />
+        >
+          <el-option
+            v-for="item in label"
+            :key="item"
+            :label="item"
+            :value="item"
+          />
+        </el-select>
       </el-form-item>
 
       <el-form-item>
@@ -82,6 +89,7 @@ const open = defineModel('open', { type: Boolean, default: false })
 const emit = defineEmits<{
   (e: 'ok'): void
 }>()
+defineProps<{ label: string[] }>()
 
 interface RuleForm {
   name: string

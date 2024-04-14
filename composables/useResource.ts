@@ -28,7 +28,7 @@ export default function useResource({ random }: { random: boolean }) {
   const loading = ref(false)
   const resources = ref<Tables<'resources'>[]>([])
 
-  const randomResource = createRandomResource()
+  const randomResource = ref<Tables<'resources'>[]>(createRandomResource())
 
   async function queryResources() {
     try {
