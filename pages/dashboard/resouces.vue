@@ -10,6 +10,21 @@ const updateDialogRef = ref<{ setFormValue: (value: Tables<'resources'>) => void
 const { resources, mutate, loading } = useResource({ random: false })
 const search = ref('')
 
+const currentPage = ref(1)
+const pageSize = ref(15)
+const total = ref(0)
+
+const filterResource = computed(() => {
+  return resources.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+})
+
+watchEffect(() => {
+  const list = resources.value
+
+  const count = list.length
+  total.value = count
+})
+
 // 获取所有的标签，不能有重复的值
 const label = computed(() => {
   const labels = resources.value.map(d => d.label).flat() ?? []
@@ -93,11 +108,18 @@ async function deleteResource(id: string) {
 function formatDate(date: string): string {
   return dayjs(date).format('YYYY-MM-DD HH:mm')
 }
+
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`)
+}
 </script>
 
 <template>
   <div>
     <div class="header">
+      <el-button @click="mutate">
+        刷新列表
+      </el-button>
       <el-button @click="addOpen = true">
         数据录入
       </el-button>
@@ -106,7 +128,7 @@ function formatDate(date: string): string {
       ref="multipleTableRef"
       v-loading="loading"
       row-key="id"
-      :data="resources"
+      :data="filterResource"
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
@@ -140,6 +162,7 @@ function formatDate(date: string): string {
       <el-table-column
         prop="categories"
         label="分类"
+        width="100"
       />
 
       <el-table-column
@@ -186,6 +209,15 @@ function formatDate(date: string): string {
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      v-model:current-page="currentPage"
+      background
+      layout="prev, pager, next"
+      :total="total"
+      :page-size="pageSize"
+      class="paging"
+      @current-change="handleCurrentChange"
+    />
     <div style="margin-top: 20px">
       <el-button
         v-if="multipleSelection.length > 0"
@@ -251,5 +283,9 @@ function formatDate(date: string): string {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+.paging {
+  padding-block: 16px;
+  justify-content: flex-end;
 }
 </style>

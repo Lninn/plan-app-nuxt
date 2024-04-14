@@ -8,11 +8,11 @@
         @select="handleSelect"
       >
         <el-menu-item index="index">
-          Processing Center
+          工作台
         </el-menu-item>
         <el-sub-menu index="dashboard">
           <template #title>
-            Workspace
+            后台管理
           </template>
           <el-menu-item index="resouces">
             资源管理
