@@ -151,7 +151,6 @@ async function deleteResource(id: string) {
           >
             编辑
           </el-button>
-
           <el-popconfirm
             :title="`确定删除 \`${scope.row.name}\` 吗？`"
             confirm-button-text="确定"
@@ -178,14 +177,23 @@ async function deleteResource(id: string) {
       <el-button @click="toggleSelection()">
         Clear selection
       </el-button>
-      <el-button
+
+      <el-popconfirm
         v-if="multipleSelection.length > 0"
-        :loading="deleteLoading"
-        type="danger"
-        @click="handleDeleteBatch"
+        :title="`确定删除选中的 ${multipleSelection.length} 行吗？`"
+        confirm-button-text="确定"
+        cancel-button-text="取消"
+        @confirm="handleDeleteBatch"
       >
-        删除选中的 {{ multipleSelection.length }} 行
-      </el-button>
+        <template #reference>
+          <el-button
+            :loading="deleteLoading"
+            type="danger"
+          >
+            删除选中的 {{ multipleSelection.length }} 行
+          </el-button>
+        </template>
+      </el-popconfirm>
     </div>
     <ResourceController
       ref="updateDialogRef"
