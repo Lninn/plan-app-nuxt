@@ -2,6 +2,8 @@
 import type { ElTable } from 'element-plus'
 import type { Tables } from '~/database.types'
 
+const addOpen = ref(false)
+
 const updateDialogOpen = ref(false)
 const updateDialogRef = ref<{ setFormValue: (value: Tables<'resources'>) => void }>()
 const { resources, mutate, loading } = useResource({ random: false })
@@ -84,6 +86,11 @@ async function deleteResource(id: string) {
 
 <template>
   <div>
+    <div class="header">
+      <el-button @click="addOpen = true">
+        数据录入
+      </el-button>
+    </div>
     <el-table
       ref="multipleTableRef"
       v-loading="loading"
@@ -207,10 +214,19 @@ async function deleteResource(id: string) {
       use-type="update"
       @ok="mutate"
     />
+    <AddResource
+      v-model:open="addOpen"
+      @ok="mutate"
+    />
   </div>
 </template>
 
 <style scoped>
+.header {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-end: 16px;
+}
 .avator-img {
   width: 40px;
   flex-shrink: 0;
