@@ -67,7 +67,7 @@ function openPage(url: string) {
   cursor: pointer;
 }
 .title:hover {
-  color: #7f5af0;
+  color: var(--el-color-primary-light-3);
 }
 .body {
   display: flex;

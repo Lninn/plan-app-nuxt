@@ -159,13 +159,11 @@ function formatDate(date: string): string {
         <template #header>
           <el-input
             v-model="search"
-            size="small"
             placeholder="Type to search"
           />
         </template>
         <template #default="scope">
           <el-button
-            size="small"
             @click="handleEdit(scope.$index, scope.row)"
           >
             编辑
@@ -178,7 +176,6 @@ function formatDate(date: string): string {
           >
             <template #reference>
               <el-button
-                size="small"
                 type="danger"
                 :loading="getDeleteLoading(scope.$index)"
               >

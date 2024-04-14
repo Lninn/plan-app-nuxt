@@ -17,6 +17,8 @@ html.dark {
   /* 自定义深色背景颜色 */
   --el-color-primary: #7f5af0;
   --el-color-white: #fffffe;
+  
+  --el-color-primary-light-3: #7f5af0;
 }
 
 :where(
@@ -26,5 +28,14 @@ html.dark {
 ) {
   color-scheme: light;
 
-  --surface-1: blue;
+  --surface-1: #f2f4f6;
+  --text-1: #00214d;
+  --surface-2: #fffffe;
+}
+html.light {
+  /* 自定义深色背景颜色 */
+  --el-color-primary: #00ebc7;
+  --el-color-white: #00214d;
+  
+  --el-color-primary-light-3: #00ebc7;
 }

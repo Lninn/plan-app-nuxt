@@ -1,7 +1,7 @@
 <template>
   <el-select
     v-model="$colorMode.preference"
-    style="width:150px;margin-inline-end:8px;"
+    style="width:150px;margin-inline-end:16px;"
   >
     <el-option
       label="System"

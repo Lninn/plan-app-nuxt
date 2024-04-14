@@ -1,10 +1,16 @@
+<script setup lang="ts">
+const size = 'default' as const
+</script>
+
 <template>
-  <AppContainer>
-    <AppHeader />
-    <PageContainer>
-      <NuxtPage />
-    </PageContainer>
-  </AppContainer>
+  <el-config-provider :size="size">
+    <AppContainer>
+      <AppHeader />
+      <PageContainer>
+        <NuxtPage />
+      </PageContainer>
+    </AppContainer>
+  </el-config-provider>
 </template>
 
 <style>
