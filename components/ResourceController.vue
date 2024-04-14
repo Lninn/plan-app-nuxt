@@ -186,6 +186,7 @@ function getRandomIntInclusive(min: number, max: number) {
         <el-input
           v-model="resourceForm.url"
           placeholder="请输入资源URL"
+          :disabled="useType === 'update'"
         />
       </el-form-item>
       <el-form-item

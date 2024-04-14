@@ -171,10 +171,16 @@ async function deleteResource(id: string) {
       </el-table-column>
     </el-table>
     <div style="margin-top: 20px">
-      <el-button @click="toggleSelection([resources[1], resources[2]])">
+      <el-button
+        v-if="multipleSelection.length > 0"
+        @click="toggleSelection([resources[1], resources[2]])"
+      >
         Toggle selection status of second and third rows
       </el-button>
-      <el-button @click="toggleSelection()">
+      <el-button
+        v-if="multipleSelection.length > 0"
+        @click="toggleSelection()"
+      >
         Clear selection
       </el-button>
 
