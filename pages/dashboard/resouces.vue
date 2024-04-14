@@ -117,6 +117,7 @@ function formatDate(date: string): string {
       <el-table-column
         prop="name"
         label="名称"
+        width="200"
       >
         <template #default="scope">
           <div class="name-column">

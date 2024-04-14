@@ -7,9 +7,18 @@ export default defineEventHandler(async (event) => {
     throw createError({ status: 400, message: 'url is required' })
   }
 
-  const res = await $fetch(
-    queryParams.url,
-  ) as string
+  let res = ''
+  try {
+    res = await $fetch(
+      queryParams.url,
+    ) as string
+  }
+  catch (error) {
+    console.log(
+      (error instanceof Error) && error.message,
+    )
+    // throw createError({ status: 400, message: error.message })
+  }
 
   const dom = new JSDOM(
     res,
@@ -49,8 +58,22 @@ export default defineEventHandler(async (event) => {
 
   const iSstartWithHttpOrHttps = url ? url.startsWith('http://') || url.startsWith('https://') : false
   if (url && !iSstartWithHttpOrHttps) {
-    const rootUrl = getRootUrl(queryParams.url)
-    url = `${rootUrl}${url}`
+    let rootUrl = getRootUrl(queryParams.url)
+    if (rootUrl.endsWith('/')) {
+      rootUrl = rootUrl.slice(0, -1)
+    }
+    url = `${rootUrl}/${url}`
+  }
+
+  if (!url) {
+    const tryUrl = `${getRootUrl(queryParams.url)}/favicon.ico`
+    try {
+      await $fetch(tryUrl)
+      return { ok: true, url: tryUrl }
+    }
+    catch (error) {
+      //
+    }
   }
 
   return { ok: !!url, url }
