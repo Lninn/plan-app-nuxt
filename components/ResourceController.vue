@@ -2,20 +2,24 @@
 import type { FormInstance, FormRules } from 'element-plus'
 import mockjs from 'mockjs'
 import { FetchError } from 'ofetch'
+import type { Tables } from '~/database.types'
 
 const { cascaderCategories, getRandomCategory } = useCategories()
 
 const visible = defineModel('visible', { type: Boolean, default: false })
 const createLoading = ref(false)
 
+const updateId = ref(-1)
+
 const emit = defineEmits<{
   (e: 'ok'): void
 }>()
-defineProps<{
+const { useType } = defineProps<{
   useType: 'create' | 'update'
 }>()
 defineExpose({
-  setFormValue(value: ResourceForm) {
+  setFormValue(value: Tables<'resources'>) {
+    updateId.value = value.id
     updateFormValues(value)
   },
 })
@@ -80,12 +84,51 @@ async function onConfirm(formEl: FormInstance | undefined) {
   if (!formEl) return
   await formEl.validate((valid) => {
     if (valid) {
-      createResource(resourceForm)
+      if (useType === 'update') {
+        updateResource(resourceForm)
+      }
+      else {
+        createResource(resourceForm)
+      }
     }
   })
 }
 
-// TODO 创建资源 | 更新资源
+async function updateResource(payload: ResourceForm) {
+  const {
+    name,
+    categories,
+    label,
+  } = payload
+  try {
+    createLoading.value = true
+    const data = await $fetch('/api/resource', {
+      method: 'PUT',
+      body: {
+        id: updateId.value,
+        name,
+        categories,
+        label,
+      },
+    })
+
+    if (data.ok) {
+      ElMessage.success('更新成功')
+      visible.value = false
+      resourceFormRef.value?.resetFields()
+      emit('ok')
+    }
+  }
+  catch (error) {
+    if (error instanceof FetchError) {
+      ElMessage.error(error.statusMessage)
+    }
+  }
+  finally {
+    createLoading.value = false
+  }
+}
+
 async function createResource(payload: ResourceForm) {
   try {
     createLoading.value = true
@@ -195,6 +238,7 @@ function getRandomIntInclusive(min: number, max: number) {
       >
         <UrlIconPicker
           v-model="resourceForm.icon"
+          :disabled="useType === 'update'"
           placeholder="请输入资源图标"
         />
       </el-form-item>

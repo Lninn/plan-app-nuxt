@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import mockjs from 'mockjs'
-
 const model = defineModel({ type: String, required: true })
+defineProps<{
+  disabled: boolean
+}>()
 
-const isDefault = ref(true)
-
-const img = mockjs.Random.image('160x160', '#4A7BF7')
-const imgUrl = computed(() => isDefault.value ? img : 'https://cn.vuejs.org/logo.svg')
-
-watchEffect(() => {
-  model.value = isDefault.value ? img : 'https://cn.vuejs.org/logo.svg'
-})
+const isDefault = ref(false)
 </script>
 
 <template>
@@ -21,9 +15,10 @@ watchEffect(() => {
       style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
       inactive-text="默认图片"
       active-text="从 URL 解析"
+      :disabled="disabled"
     />
     <div class="icon">
-      <img :src="imgUrl">
+      <img :src="model">
     </div>
   </div>
 </template>
