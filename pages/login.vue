@@ -40,6 +40,7 @@ const rules = reactive<FormRules<RuleForm>>({
   ],
 })
 
+const redirectTo = `${useRuntimeConfig().public.baseUrl}/confirm`
 const signInWithOtp = async () => {
   if (!ruleForm.email) {
     alert('Please enter an email')
@@ -51,7 +52,7 @@ const signInWithOtp = async () => {
     const { error } = await supabase.auth.signInWithOtp({
       email: ruleForm.email,
       options: {
-        emailRedirectTo: 'http://localhost:3000/confirm',
+        emailRedirectTo: redirectTo,
       },
     })
     if (!error) {
