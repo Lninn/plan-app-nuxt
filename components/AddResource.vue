@@ -110,7 +110,6 @@ const rules = reactive<FormRules<RuleForm>>({
   ],
   icon: [
     { required: true, message: '请输入资源图标', trigger: 'change' },
-    { type: 'url', message: '请输入正确的资源图标地址', trigger: 'change' },
   ],
   label: [
     { required: true, message: '请输入资源标签', trigger: 'change' },
@@ -174,6 +173,7 @@ async function CreateResource() {
     if (res.ok) {
       open.value = false
       ElMessage.success('创建成功')
+      resetForm(ruleFormRef.value)
       emit('ok')
     }
   }

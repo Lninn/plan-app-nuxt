@@ -7,13 +7,15 @@ export default defineEventHandler(async (event) => {
     throw createError({ status: 400, message: 'url is required' })
   }
 
-  const res = await $fetch(queryParams.url) as string
+  const res = await $fetch(
+    queryParams.url,
+  ) as string
 
   const dom = new JSDOM(
     res,
   )
   const _document = dom.window.document
-  const elements = _document.querySelectorAll(`head>link[rel="icon"]`)
+  const elements = _document.querySelectorAll(`head>link[rel*="icon"]`)
 
   const map: Record<string, string> = {}
   for (const element of elements) {
@@ -23,6 +25,9 @@ export default defineEventHandler(async (event) => {
     if (href && sizes) {
       const keyOfsize = parseInt(sizes.value)
       map[keyOfsize] = href.value
+    }
+    else if (href) {
+      map[0] = href.value
     }
   }
 
@@ -35,6 +40,17 @@ export default defineEventHandler(async (event) => {
   }
   else {
     url = map[keyOfMax]
+  }
+
+  function getRootUrl(url: string) {
+    const urlObj = new URL(url)
+    return `${urlObj.protocol}//${urlObj.host}`
+  }
+
+  const iSstartWithHttpOrHttps = url.startsWith('http://') || url.startsWith('https://')
+  if (url && !iSstartWithHttpOrHttps) {
+    const rootUrl = getRootUrl(queryParams.url)
+    url = `${rootUrl}${url}`
   }
 
   return { ok: !!url, url }

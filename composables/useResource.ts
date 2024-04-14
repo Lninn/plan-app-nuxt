@@ -35,6 +35,10 @@ export default function useResource({ random }: { random: boolean }) {
       loading.value = true
       const queryRes = await $fetch('/api/resource', {
         method: 'GET',
+        params: {
+          orderBy: 'created_at',
+          orderType: 'desc',
+        },
       })
 
       if (queryRes.ok) {
