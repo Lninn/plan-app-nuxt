@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ElTable } from 'element-plus'
+import { dayjs } from 'element-plus'
 import type { Tables } from '~/database.types'
 
 const addOpen = ref(false)
@@ -82,6 +83,10 @@ async function deleteResource(id: string) {
     deleteLoading.value = false
   }
 }
+
+function formatDate(date: string): string {
+  return dayjs(date).format('YYYY-MM-DD HH:mm')
+}
 </script>
 
 <template>
@@ -140,7 +145,7 @@ async function deleteResource(id: string) {
         label="创建时间"
       >
         <template #default="scope">
-          <span>{{ scope.row.created_at }}</span>
+          <span>{{ formatDate(scope.row.created_at) }}</span>
         </template>
       </el-table-column>
       <el-table-column align="right">
