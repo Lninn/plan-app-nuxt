@@ -1,8 +1,11 @@
 import { createError } from 'h3'
+import { requireAuth } from '../utils/auth'
 import type { Database } from '~/database.types'
 import { serverSupabaseClient } from '#supabase/server'
 
 export default defineEventHandler(async (event) => {
+  await requireAuth(event)
+
   const client = await serverSupabaseClient<Database>(event)
   const queryParams = getQuery<{ id: number, name: string, category: string, orderBy: string, orderType: 'desc' | 'asc' }>(event)
 

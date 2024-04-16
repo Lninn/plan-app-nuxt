@@ -1,6 +1,9 @@
 import { JSDOM } from 'jsdom'
+import { requireAuth } from '../utils/auth'
 
 export default defineEventHandler(async (event) => {
+  await requireAuth(event)
+
   const queryParams = getQuery<{ url: string }>(event)
 
   if (!queryParams.url) {
