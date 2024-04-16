@@ -7,7 +7,7 @@
 <style>
 .app {
   width: 90%;
-  max-width: 1040px;
+  max-width: 1440px;
   margin-right: auto;
   margin-left: auto;
 }

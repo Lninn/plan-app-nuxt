@@ -2,6 +2,12 @@
 const createDialogOpen = ref(false)
 
 const { resources, mutate } = useResource({ random: false })
+
+// 获取所有的标签，不能有重复的值
+const label = computed(() => {
+  const labels = resources.value.map(d => d.label).flat() ?? []
+  return [...new Set(labels)]
+})
 </script>
 
 <template>
@@ -14,14 +20,30 @@ const { resources, mutate } = useResource({ random: false })
         新增数据
       </el-button>
     </div>
-    <div class="list">
-      <template
-        v-for="record of resources"
-        :key="record.id"
-      >
-        <WebResource :record="record" />
-      </template>
+
+    <div class="container">
+      <div class="label-list">
+        <template
+          v-for="name in label"
+          :key="name"
+        >
+          <div class="label-item">
+            <div>{{ name }}</div>
+            <div>like</div>
+          </div>
+        </template>
+      </div>
+
+      <div class="list">
+        <template
+          v-for="record of resources"
+          :key="record.id"
+        >
+          <WebResource :record="record" />
+        </template>
+      </div>
     </div>
+
     <ResourceController
       v-model:visible="createDialogOpen"
       use-type="create"
@@ -41,6 +63,8 @@ const { resources, mutate } = useResource({ random: false })
 }
 
 .list {
+  flex-grow: 1;
+
   --grid-layout-gap: 16px;
   --grid-column-count: 8;
   --grid-item--min-width: 296px;
@@ -50,5 +74,21 @@ const { resources, mutate } = useResource({ random: false })
   display: grid;
   grid-template-columns: repeat(auto-fill,minmax(max(var(--grid-item--min-width),var(--grid-item--max-width)),1fr));
   grid-gap: var(--grid-layout-gap);
+}
+
+.label-list {
+  width: 300px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.label-item {
+  padding: 8px;
+  display: flex;
+  gap: 5px;
+}
+
+.container {
+  display: flex;
+  align-items: baseline;
 }
 </style>
