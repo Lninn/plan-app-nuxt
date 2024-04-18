@@ -3,10 +3,24 @@ const createDialogOpen = ref(false)
 
 const { resources, mutate } = useResource({ random: false })
 
+const checkedMap = ref<Record<string, boolean>>({})
+
 // 获取所有的标签，不能有重复的值
 const label = computed(() => {
   const labels = resources.value.map(d => d.label).flat() ?? []
   return [...new Set(labels)]
+})
+
+const filterResource = computed(() => {
+  const checkedMapCount = Object.keys(checkedMap.value).filter(name => checkedMap.value[name]).length
+  if (checkedMapCount === 0) {
+    return resources.value
+  }
+
+  return resources.value.filter((d) => {
+    const label = d.label ?? []
+    return label.some(name => checkedMap.value[name])
+  })
 })
 </script>
 
@@ -27,16 +41,18 @@ const label = computed(() => {
           v-for="name in label"
           :key="name"
         >
-          <div class="label-item">
-            <div>{{ name }}</div>
-            <div>like</div>
-          </div>
+          <el-check-tag
+            :checked="checkedMap[name]"
+            @change="v => checkedMap[name] = v"
+          >
+            {{ name }}
+          </el-check-tag>
         </template>
       </div>
 
       <div class="list">
         <template
-          v-for="record of resources"
+          v-for="record of filterResource"
           :key="record.id"
         >
           <WebResource :record="record" />
@@ -77,18 +93,14 @@ const label = computed(() => {
 }
 
 .label-list {
-  width: 300px;
   display: flex;
+  gap: 8px;
   flex-wrap: wrap;
-}
-.label-item {
-  padding: 8px;
-  display: flex;
-  gap: 5px;
+  margin-block-end: 16px;
 }
 
 .container {
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
 }
 </style>

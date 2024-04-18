@@ -139,7 +139,7 @@ const handleCurrentChange = (val: number) => {
       <el-table-column
         prop="name"
         label="名称"
-        width="200"
+        width="300"
       >
         <template #default="scope">
           <div class="name-column">
